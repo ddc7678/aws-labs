@@ -1,0 +1,78 @@
+AWSTemplateFormatVersion: '2025-05-09'
+Description: AWS CloudFormation template to create an Amazon Lightsail instance
+
+Parameters:
+  InstanceName:
+    Type: String
+    Description: Name of the Lightsail instance
+    Default: MyLightsailInstance
+    MinLength: 3
+    MaxLength: 255
+    AllowedPattern: '^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$'
+    ConstraintDescription: Instance name must start and end with a letter or number and can include hyphens.
+
+  BlueprintId:
+    Type: String
+    Description: Blueprint ID for the Lightsail instance (e.g., OS or application)
+    Default: nginx
+    AllowedValues:
+      - nginx
+      - nodejs
+      - debian_12
+      - ubuntu_24_04
+      - amazon_linux_2023
+
+    ConstraintDescription: Must be a valid Lightsail blueprint ID.
+
+  BundleId:
+    Type: String
+    Description: Bundle ID for the Lightsail instance (e.g., instance size)
+    Default: nano_3_0
+    AllowedValues:
+      - nano_3_0
+      - micro_3_0
+      - small_3_0
+      - medium_3_0
+      - large_3_0
+      - nano_ipv6_3_0
+      - micro_ipv6_3_0
+      - small_ipv6_3_0
+      - medium_ipv6_3_0
+      - large_ipv6_3_0      
+    ConstraintDescription: Must be a valid Lightsail bundle ID.
+
+  AvailabilityZone:
+    Type: String
+    Description: Availability Zone for the Lightsail instance
+    Default: us-east-1a
+    AllowedValues:
+      - us-east-1a
+      - us-east-1b
+      - us-east-1c
+      - us-west-2a
+      - us-west-2b
+      - us-west-2c
+    ConstraintDescription: Must be a valid AWS Lightsail availability zone.
+
+Resources:
+  LightsailInstance:
+    Type: AWS::Lightsail::Instance
+    Properties:
+      InstanceName: !Ref InstanceName
+      BlueprintId: !Ref BlueprintId
+      BundleId: !Ref BundleId
+      AvailabilityZone: !Ref AvailabilityZone
+      Tags:
+        - Key: Environment
+          Value: Production
+
+Outputs:
+  InstanceName:
+    Description: Name of the created Lightsail instance
+    Value: !Ref InstanceName
+  PublicIpAddress:
+    Description: Public IP address of the Lightsail instance
+    Value: !GetAtt LightsailInstance.PublicIpAddress
+  AvailabilityZone:
+    Description: Availability Zone of the Lightsail instance
+    Value: !Ref AvailabilityZone
