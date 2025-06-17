@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2025-05-09'
+AWSTemplateFormatVersion: '2010-09-09'
 Description: AWS CloudFormation template to create an Amazon Lightsail instance
 
 Parameters:
@@ -54,6 +54,15 @@ Parameters:
       - us-west-2c
     ConstraintDescription: Must be a valid AWS Lightsail availability zone.
 
+  KeyPairName:
+    Type: String
+    Description: Name of an existing Lightsail key pair for SSH access
+    Default: my-key-pair
+    MinLength: 1
+    MaxLength: 255
+    AllowedPattern: '^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$'
+    ConstraintDescription: Key pair name must start and end with a letter or number and can include hyphens.
+
 Resources:
   LightsailInstance:
     Type: AWS::Lightsail::Instance
@@ -62,6 +71,7 @@ Resources:
       BlueprintId: !Ref BlueprintId
       BundleId: !Ref BundleId
       AvailabilityZone: !Ref AvailabilityZone
+      KeyPairName: !Ref KeyPairName
       Tags:
         - Key: Environment
           Value: Production
@@ -76,3 +86,6 @@ Outputs:
   AvailabilityZone:
     Description: Availability Zone of the Lightsail instance
     Value: !Ref AvailabilityZone
+  KeyPairName:
+    Description: Name of the key pair used for SSH access
+    Value: !Ref KeyPairName
